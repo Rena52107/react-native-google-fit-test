@@ -4,28 +4,53 @@ import { StyleSheet, Text, View } from 'react-native';
 import GoogleFit, { Scopes } from 'react-native-google-fit';
 
 export default function App() {
+  const [isAuth, setIsAuth] = useState();
   const [stepData, setStepData] = useState(0);
 
-  const options = {
-    scopes: [Scopes.FITNESS_ACTIVITY_READ, Scopes.FITNESS_ACTIVITY_WRITE],
-  };
-
   useEffect(() => {
-    const checkAuthorization = async () => {
-      try {
-        await GoogleFit.checkIsAuthorized();
-        console.log(GoogleFit.isAuthorized);
-      } catch (err) {
-        console.log('Authorize failed: ', err.message);
-      }
+    // Auth check
+    const options = {
+      scopes: [
+        Scopes.FITNESS_ACTIVITY_READ,
+        Scopes.FITNESS_ACTIVITY_WRITE,
+        Scopes.FITNESS_BODY_READ,
+        Scopes.FITNESS_BODY_WRITE,
+      ],
     };
-
-    checkAuthorization();
+    GoogleFit.authorize(options)
+      .then((authResult) => {
+        if (authResult.success) {
+          // dispatch('AUTH_SUCCESS');
+          console.log('auth_success >>>', authResult.success);
+        } else {
+          // dispatch('AUTH_DENIED', authResult.message);
+          console.log('auth_denied >>>', authResult.message);
+        }
+      })
+      .catch((err) => {
+        // dispatch('AUTH_ERROR');
+        console.log('auth_error >>>', err.message);
+      });
   }, []);
+
+  // const opt = {
+  //   startDate: '2023-05-30T00:00:17.971Z', // required ISO8601Timestamp
+  //   endDate: new Date().toISOString(), // required ISO8601Timestamp
+  //   // bucketUnit: BucketUnit.DAY, // optional - default "DAY". Valid values: "NANOSECOND" | "MICROSECOND" | "MILLISECOND" | "SECOND" | "MINUTE" | "HOUR" | "DAY"
+  //   bucketInterval: 1, // optional - default 1.
+  // };
+
+  // GoogleFit.getDailyStepCountSamples(opt)
+  //   .then((res) => {
+  //     console.log('Daily steps >>> ', res);
+  //   })
+  //   .catch((err) => {
+  //     console.warn(err);
+  //   });
 
   return (
     <View style={styles.container}>
-      <Text>Test</Text>
+      <Text>stepData: {stepData}</Text>
       <StatusBar style='auto' />
     </View>
   );
