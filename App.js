@@ -4,9 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import GoogleFit, { Scopes } from 'react-native-google-fit';
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState();
-  const [stepData, setStepData] = useState(0);
-
   useEffect(() => {
     // Auth check
     const options = {
@@ -22,6 +19,7 @@ export default function App() {
         if (authResult.success) {
           // dispatch('AUTH_SUCCESS');
           console.log('auth_success >>>', authResult.success);
+          fetchData();
         } else {
           // dispatch('AUTH_DENIED', authResult.message);
           console.log('auth_denied >>>', authResult.message);
@@ -33,24 +31,22 @@ export default function App() {
       });
   }, []);
 
-  // const opt = {
-  //   startDate: '2023-05-30T00:00:17.971Z', // required ISO8601Timestamp
-  //   endDate: new Date().toISOString(), // required ISO8601Timestamp
-  //   // bucketUnit: BucketUnit.DAY, // optional - default "DAY". Valid values: "NANOSECOND" | "MICROSECOND" | "MILLISECOND" | "SECOND" | "MINUTE" | "HOUR" | "DAY"
-  //   bucketInterval: 1, // optional - default 1.
-  // };
+  const opt = {
+    startDate: '2023-05-30T00:00:17.971Z', // required ISO8601Timestamp
+    endDate: new Date().toISOString(), // required ISO8601Timestamp
+    // bucketUnit: BucketUnit.DAY, // optional - default "DAY". Valid values: "NANOSECOND" | "MICROSECOND" | "MILLISECOND" | "SECOND" | "MINUTE" | "HOUR" | "DAY"
+    bucketInterval: 1, // optional - default 1.
+  };
 
-  // GoogleFit.getDailyStepCountSamples(opt)
-  //   .then((res) => {
-  //     console.log('Daily steps >>> ', res);
-  //   })
-  //   .catch((err) => {
-  //     console.warn(err);
-  //   });
+  async function fetchData() {
+    const res = await GoogleFit.getDailyStepCountSamples(opt);
+    // console.log('response data: ', res);
+    console.log('extract step data: ', res[1].steps);
+  }
 
   return (
     <View style={styles.container}>
-      <Text>stepData: {stepData}</Text>
+      <Text>stepData: Test</Text>
       <StatusBar style='auto' />
     </View>
   );
